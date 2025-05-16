@@ -93,21 +93,10 @@ Feeded all three adversarial sets into **DenseNet-121**—without retraining—t
 
 ### Key Observations
 
-* **Baseline:** **74.8 %** Top-1 / **93.6 %** Top-5 on the clean 100-class subset.
-
-* **FGSM transfer (ε = 0.02)**  
-  *DenseNet-121:* **74.8 % → 45.8 %** Top-1 (−29.0 pp)  
-  → Roughly 60 % of the original accuracy survives, signalling **moderate robustness** to single-step pixel perturbations.
-
-* **PGD transfer (ε = 0.02, 10 iters)**  
-  *DenseNet-121:* **74.8 % → 40.0 %** Top-1 (−34.8 pp)  
-  → **Most destructive** among the transferred attacks; confirms PGD’s superior cross-model transferability.
-
-* **Patch transfer (32 × 32, ε = 0.5)**  
-  *DenseNet-121:* **74.8 % → 67.6 %** Top-1 (−7.2 pp)  
-  → **Localized perturbations hardly transfer**; DenseNet retains >90 % of its clean accuracy under this attack.
-
-* **Overall trend**  
-  DenseNet-121 endures pixel-wise attacks **better than ResNet-34** (higher remaining accuracy), yet iterative PGD still inflicts a substantial 35-point drop. Patch attacks, while devastating to ResNet, are largely **non-transferable** to DenseNet’s architecture.
+- Even simple attacks like FGSM cause sharp accuracy drops under $L_\infty$ constraints.
+- Iterative attacks (PGD) are significantly more effective and transfer more reliably.
+- Patch attacks, despite being localized, are highly effective when $\epsilon$ is large.
+- Top-5 accuracy is more resilient than Top-1.
+- Transferability to DenseNet-121 confirms vulnerability beyond white-box settings.
 
 ---
