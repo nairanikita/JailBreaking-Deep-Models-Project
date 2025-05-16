@@ -2,7 +2,7 @@
 
 ###  Team Members
 - Nikita Gupta (ng3230)
-- Saavy Singh
+- Saavy Singh  (ss19170)
   
 ## Overview
 This project implements adversarial attacks on a pre-trained ResNet-34 classifier trained on ImageNet-1K. We craft pixel-wise (L∞) and patch-based attacks to significantly degrade model accuracy, then evaluate how well these adversarial examples transfer to other architectures like DenseNet-121.
@@ -21,7 +21,33 @@ This project implements adversarial attacks on a pre-trained ResNet-34 classifie
 | Task 5 | Transferability tests on DenseNet-121 |
 
 ---
+## Instructions to Run the Code
+### Requirements
 
+To run the notebook, you'll need:
+
+- Python 3.8+
+- PyTorch
+- torchvision
+- matplotlib
+- numpy
+- PIL
+- tqdm
+- scikit-learn
+- seaborn (for visualizations)
+
+Install them using:
+```bash
+pip install torch torchvision matplotlib numpy pillow tqdm scikit-learn seaborn
+```
+
+Run the notebook:
+```bash
+jupyter notebook Jailbreak_Deep-Models-Project3.ipynb
+```
+
+
+---  
 ## Methodology
 
 
@@ -49,26 +75,39 @@ Feeded all three adversarial sets into **DenseNet-121**—without retraining—t
 
 | Dataset              | Top-1  | Top-5  |
 |----------------------|--------|--------|
-| Clean                | 65.52% | 83.28% |
-| FGSM (ε=0.02)        |  6.20% | 35.40% |
-| Improved Attack      |  0.00% | 14.60% |
-| Patch Attack (32x32) | 51.40% | 83.00% |
+| Clean                | 76.00% | 94.20% |
+| FGSM (ε=0.02)        |  3.40% | 21.20% |
+| Improved Attack      |  0.00% | 1.00% |
+| Patch Attack (32x32) | 4.40% | 35.60% |
 
 ### DenseNet-121 Transfer
 
 | Dataset              | Top-1  | Top-5  |
 |----------------------|--------|--------|
 | Clean                | 74.80% | 93.60% |
-| FGSM                 | 63.40% | 89.40% |
-| Improved             | 60.80% | 88.60% |
-| Patch                | 72.20% | 91.80% |
+| FGSM                 | 45.80% | 76.20% |
+| Improved             | 40.00% | 76.40% |
+| Patch                | 67.60% | 90.20% |
 
 ---
 
-
 ### Key Observations
-* **FGSM** roughly halves top-1 accuracy while remaining partially transferable.  
-* **PGD** causes the steepest drop (≈ Δ₂ %) and transfers best, confirming boundary overlap.  
-* **Patch** perturbations are highly effective on ResNet-34 but transfer poorly to DenseNet-121.
-* We first try MI-FGSM for its improved convergence due to momentum, but fall back to PGD if MI-FGSM fails to fool the model. This hybrid approach ensures high attack success while staying within the ε-bound.*
+
+* **Baseline:** **74.8 %** Top-1 / **93.6 %** Top-5 on the clean 100-class subset.
+
+* **FGSM transfer (ε = 0.02)**  
+  *DenseNet-121:* **74.8 % → 45.8 %** Top-1 (−29.0 pp)  
+  → Roughly 60 % of the original accuracy survives, signalling **moderate robustness** to single-step pixel perturbations.
+
+* **PGD transfer (ε = 0.02, 10 iters)**  
+  *DenseNet-121:* **74.8 % → 40.0 %** Top-1 (−34.8 pp)  
+  → **Most destructive** among the transferred attacks; confirms PGD’s superior cross-model transferability.
+
+* **Patch transfer (32 × 32, ε = 0.5)**  
+  *DenseNet-121:* **74.8 % → 67.6 %** Top-1 (−7.2 pp)  
+  → **Localized perturbations hardly transfer**; DenseNet retains >90 % of its clean accuracy under this attack.
+
+* **Overall trend**  
+  DenseNet-121 endures pixel-wise attacks **better than ResNet-34** (higher remaining accuracy), yet iterative PGD still inflicts a substantial 35-point drop. Patch attacks, while devastating to ResNet, are largely **non-transferable** to DenseNet’s architecture.
+
 ---
